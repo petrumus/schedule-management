@@ -133,6 +133,8 @@ CREATE POLICY "Users can update own profile" ON profiles FOR UPDATE
   USING (auth.uid() = id);
 CREATE POLICY "Admins can update all profiles" ON profiles FOR UPDATE
   USING (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
+CREATE POLICY "Allow insert for auth trigger" ON profiles FOR INSERT
+  WITH CHECK (true);
 
 -- invite_links
 ALTER TABLE invite_links ENABLE ROW LEVEL SECURITY;
