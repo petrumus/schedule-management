@@ -99,12 +99,12 @@ export default function Header({
               )}
 
               <div className="flex items-center gap-2 ml-2">
-                <span className="text-sm text-gray-600">{profile?.full_name || profile?.email}</span>
+                <span className="text-sm text-gray-600 bg-gray-100 rounded-md px-2 py-1 font-medium capitalize">{profile?.role}</span>
                 <button
                   onClick={signOut}
                   className="bg-gray-100 text-gray-700 rounded-md px-3 py-1.5 text-sm font-medium hover:bg-gray-200 transition-colors cursor-pointer"
                 >
-                  Logout
+                  Switch Role
                 </button>
               </div>
             </div>

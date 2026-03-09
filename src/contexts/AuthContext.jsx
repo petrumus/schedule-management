@@ -1,5 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react'
-import { supabase, supabaseConfigured } from '../supabaseClient'
+import { createContext, useContext, useState } from 'react'
 
 const AuthContext = createContext()
 
@@ -7,78 +6,46 @@ export function useAuth() {
   return useContext(AuthContext)
 }
 
+const FAKE_PROFILES = {
+  admin: {
+    id: 'admin-user-id',
+    full_name: 'Admin User',
+    email: 'admin@example.com',
+    role: 'admin',
+  },
+  user: {
+    id: 'regular-user-id',
+    full_name: 'Regular User',
+    email: 'user@example.com',
+    role: 'user',
+  },
+}
+
 export function AuthProvider({ children }) {
-  const [session, setSession] = useState(null)
-  const [profile, setProfile] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [role, setRole] = useState(() => localStorage.getItem('selectedRole') || null)
 
-  useEffect(() => {
-    if (!supabaseConfigured) {
-      setLoading(false)
-      return
-    }
+  const profile = role ? FAKE_PROFILES[role] : null
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-      if (session) fetchProfile(session.user.id)
-      else setLoading(false)
-    })
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-      if (session) fetchProfile(session.user.id)
-      else {
-        setProfile(null)
-        setLoading(false)
-      }
-    })
-
-    return () => subscription.unsubscribe()
-  }, [])
-
-  async function fetchProfile(userId) {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .single()
-
-    if (error) {
-      console.error('Error fetching profile:', error)
-      setProfile(null)
-    } else {
-      setProfile(data)
-    }
-    setLoading(false)
+  function selectRole(newRole) {
+    localStorage.setItem('selectedRole', newRole)
+    setRole(newRole)
   }
 
-  async function signInWithMagicLink(email) {
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: window.location.origin + (import.meta.env.BASE_URL || '/'),
-      },
-    })
-    if (error) throw error
-  }
-
-  async function signOut() {
-    const { error } = await supabase.auth.signOut()
-    if (error) console.error('Error signing out:', error)
-    setSession(null)
-    setProfile(null)
+  function signOut() {
+    localStorage.removeItem('selectedRole')
+    setRole(null)
   }
 
   const value = {
-    session,
+    session: role ? { user: profile } : null,
     profile,
-    loading,
-    signInWithMagicLink,
+    loading: false,
     signOut,
-    refreshProfile: () => session && fetchProfile(session.user.id),
-    isAdmin: profile?.role === 'admin',
-    isManager: profile?.role === 'manager',
-    isAdminOrManager: profile?.role === 'admin' || profile?.role === 'manager',
+    selectRole,
+    refreshProfile: () => {},
+    isAdmin: role === 'admin',
+    isManager: false,
+    isAdminOrManager: role === 'admin',
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
