@@ -6,6 +6,8 @@ import InvitePage from './pages/InvitePage'
 import PendingPage from './pages/PendingPage'
 import CalendarPage from './pages/CalendarPage'
 import AdminPage from './pages/AdminPage'
+import PrivacyPage from './pages/PrivacyPage'
+import TermsPage from './pages/TermsPage'
 
 function ProtectedRoute({ children }) {
   const { session, profile, loading } = useAuth()
@@ -64,6 +66,8 @@ export default function App() {
       />
       <Route path="/invite" element={<InvitePage />} />
       <Route path="/pending" element={<PendingPage />} />
+      <Route path="/privacy" element={<PrivacyPage />} />
+      <Route path="/terms" element={<TermsPage />} />
       <Route
         path="/calendar"
         element={

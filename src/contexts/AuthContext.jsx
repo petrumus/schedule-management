@@ -52,14 +52,14 @@ export function AuthProvider({ children }) {
     setLoading(false)
   }
 
-  async function signInWithGoogle() {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
+  async function signInWithMagicLink(email) {
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
       options: {
-        redirectTo: window.location.origin + '/schedule-management/calendar',
+        emailRedirectTo: window.location.origin + (import.meta.env.BASE_URL || '/'),
       },
     })
-    if (error) console.error('Error signing in:', error)
+    if (error) throw error
   }
 
   async function signOut() {
@@ -73,7 +73,7 @@ export function AuthProvider({ children }) {
     session,
     profile,
     loading,
-    signInWithGoogle,
+    signInWithMagicLink,
     signOut,
     refreshProfile: () => session && fetchProfile(session.user.id),
     isAdmin: profile?.role === 'admin',
