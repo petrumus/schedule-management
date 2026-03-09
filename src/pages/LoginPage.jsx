@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 
 export default function LoginPage() {
@@ -20,6 +21,11 @@ export default function LoginPage() {
           </svg>
           Sign in with Google
         </button>
+        <p className="mt-6 text-sm text-gray-500">
+          <Link to="/privacy" className="text-blue-600 hover:text-blue-800">Privacy Policy</Link>
+          {' · '}
+          <Link to="/terms" className="text-blue-600 hover:text-blue-800">Terms of Service</Link>
+        </p>
       </div>
     </div>
   )
