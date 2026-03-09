@@ -37,6 +37,24 @@ VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key
 ```
 
+### GitHub Pages Deployment Setup (Manual Steps Required)
+
+1. **Set GitHub repository secrets** (Settings → Secrets and variables → Actions → New repository secret):
+   - `VITE_SUPABASE_URL` — your Supabase project URL (e.g. `https://xxxxx.supabase.co`)
+   - `VITE_SUPABASE_ANON_KEY` — your Supabase anon/public key
+
+   Without these secrets, the deployed app will show a "Configuration Required" error instead of a blank page.
+
+2. **Enable GitHub Pages** (Settings → Pages):
+   - Source: **GitHub Actions** (not "Deploy from a branch")
+
+3. **Configure Supabase Auth redirect URLs** (Supabase Dashboard → Authentication → URL Configuration):
+   - Add `https://<username>.github.io/schedule-management/**` to the Redirect URLs list
+
+4. **Configure Google OAuth** in Supabase Dashboard (Authentication → Providers → Google):
+   - Set up Google OAuth credentials in Google Cloud Console
+   - Add the authorized redirect URI from Supabase to Google Cloud Console
+
 ## Project Structure
 
 ```
@@ -104,6 +122,7 @@ npm run preview      # Preview production build locally
 - Use React Context for auth state; local state for everything else
 - Handle loading and error states in every data-fetching component
 - All date/time handling uses the user's local timezone
+- **Before each commit**: update CLAUDE.md and any feature specification files to reflect the current state of the project (new components, changed architecture, updated build steps, etc.)
 
 ## RLS Policy Notes
 
