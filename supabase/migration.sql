@@ -101,7 +101,7 @@ CREATE TRIGGER on_profile_created
 CREATE OR REPLACE FUNCTION handle_auth_user_created()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO profiles (id, full_name, email, avatar_url)
+  INSERT INTO public.profiles (id, full_name, email, avatar_url)
   VALUES (
     NEW.id,
     NEW.raw_user_meta_data->>'full_name',
@@ -110,7 +110,7 @@ BEGIN
   );
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
