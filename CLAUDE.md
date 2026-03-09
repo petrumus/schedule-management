@@ -131,6 +131,8 @@ npm run preview      # Preview production build locally
 - Users can only access their own data unless they are admin/manager
 - Admins have full read/write on all tables
 - Managers can read all cancellation requests and update their status
+- `profiles` has an open INSERT policy (`WITH CHECK (true)`) to allow the `handle_auth_user_created` trigger to insert rows on signup; this is safe because `profiles.id` has a FK constraint to `auth.users(id)` and `role` defaults to `pending`
+- The `handle_auth_user_created` trigger function uses `SECURITY DEFINER` and `SET search_path = public` since it runs from the `auth` schema context
 
 ---
 
